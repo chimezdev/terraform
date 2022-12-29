@@ -70,3 +70,91 @@ If your configuration is valid, Terraform will return a success message.
 - run `terraform plan` terraform will go ahead to compare your infrastructure definition and resources running on your aws account if any and will output what will be created or deleted.
 - run `terraform apply` and type yes when prompted. This will go ahead and provision the ec2 instance we have defined.
 ![terraform-apply](./images/terra-apply.png)
+![provisione instance](./images/inst-running.png)
+
+## Inspect state
+Applying your configuration, Terraform wrote data into a file called terraform.tfstate. This file now contains the IDs and properties of the resources Terraform created so that it can manage or destroy those resources going forward. Store this file securely and only share to tructed team menbers who need to manage your infrastructure.
+- Inspect the current state using terraform show
+- to get a resource from the state file assuming you have a long state file run `terraform state list`
+
+## Terminate Infrastructure
+- to destroy all resources created by terraform run `terraform destroy`
+
+# Provision More Infrastructure
+TODO
+- Local backend + provider config 
+- EC2 Instances
+- Default VPC
+    - subnet
+- Security groups + rules
+- Application Load Balancer
+    - ALB target group + attachment
+- Route 53 zone + record
+- RDS Instance
+![architecture](./images/Blank%20diagram.png)
+
+## EC2 Instances
+- define the instances as follow;
+``` 
+    resource "aws_instance" "terra-inst1" {
+    ami           = "ami-0574da719dca65348" #goto to d ec2 console, deploy inst search for d ami u want e.g 'ubuntu' and copy
+    instance_type = "t2.micro"
+    security_groups = [ aws_security_group.instance.name ]
+    user_data = <<-EOF
+                #!/bin/bash
+                echo "<h1>HELLO world from my first instance</h1>" > index.html
+                python3 -m http.server 8080 &
+                EOF
+
+    tags = {
+        Name = "first-inst-with-tf1"
+    }
+}
+```
+- notice that *security_group* and *user_data* attributes have been added
+
+## define default resources
+*data* block is used to reference existing resource on aws
+```
+    data "aws_vpc" "default_vpc" {      # data block references an existing resource on aws
+    default = true
+    }
+```
+## using the default subnet
+```
+    data "aws_subnet_ids" "default_subnet" {
+    vpc_id = data.aws_vpc.default_vpc.id
+    }
+```
+- see the *main.tf* file
+- next define security group then attach a security group rule
+- allow all traffic inbount from port 8080 over tcp protocol
+
+```
+resource "aws_security_group" "instance" {
+  name = "instance-security-group"
+}
+```
+setup load balancer listener
+Define target group for the load balancers
+attach the defined instances to the target group by defining target group attachments
+```
+resource "aws_lb_target_group_attachment" "instance_1" {
+  target_group_arn = aws_lb_target_group.intances.arn
+  target_id = aws_instance.terra-inst1.id
+  port = 8080 
+}
+```
+Setup listener rule
+- in our case the alb listens at all paths
+Setup a slightly different security group for the alb
+Define an outbound egress rule as well
+Define the load balancer itself
+Next is to define an actual domain if you have one registered.
+running `terraform plan` should now show that we have 16 resources to be provisioned if you have a registered domain name
+![resources](./images/terra-plan-large.png)
+
+# References
+[terraform aws provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
+[How to Provision AWS Infrastructure with Terraform](https://medium.com/avmconsulting-blog/provisioning-aws-infrastructure-with-terraform-6ab885fb3fcb)
+[Complete Terraform Course](https://www.youtube.com/watch?v=7xngnjfIlK4)
