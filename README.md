@@ -1,5 +1,5 @@
 # TERRAFORM
-
+![terraform](./images/terraform-aws.webp)
 Terraform is a declarative Infrastructure as Code, IaC tool. That is it a tool for provisioning resource on various providers such as AWS, Azure, GCP etc. Delarative in that you specify the end state of the resources and terraform will go ahead to generate an execution plan describing what it will do to reach the desired state, and then executes it to build the described infrastructure.
 
 # Install Terraform
@@ -61,3 +61,12 @@ The resource the block defines a piece of infrastructure. A resource might be a 
 ## Initialize the directory
 After creating a new configuration file or check out an existing configuration from version control — you need to initialize the directory with this command `terraform init`. This will download and installs providers used in the configuration, which in this case is the aws provider.
 ![initialize](./images/terra-init.png)
+
+## Validate your configuration
+- run `terraform validate`
+If your configuration is valid, Terraform will return a success message.
+
+## Create Infrastructure
+- run `terraform plan` terraform will go ahead to compare your infrastructure definition and resources running on your aws account if any and will output what will be created or deleted.
+- run `terraform apply` and type yes when prompted. This will go ahead and provision the ec2 instance we have defined.
+![terraform-apply](./images/terra-apply.png)
