@@ -153,6 +153,11 @@ Define the load balancer itself
 Next is to define an actual domain if you have one registered.
 running `terraform plan` should now show that we have 16 resources to be provisioned if you have a registered domain name
 ![resources](./images/terra-plan-large.png)
+- run `terraform apply` and enter *yes* when prompted
+- terraform will provision all the resources we have defined
+- goto the aws console and copy the load balancer DNS if the route 53 has not been set up
+- load in another tab. You will be continuously sent to different instance if you keep refreshing
+![running instances](./images/hello-world.png)
 
 # References
 [terraform aws provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
