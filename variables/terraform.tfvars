@@ -1,0 +1,5 @@
+instance_name = "hello-world"
+domain      = "tokkapart.com"
+db_name     = "mydb"
+db_user     = "mydb"
+# db_pass = "mydb"

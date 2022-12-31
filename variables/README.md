@@ -103,7 +103,6 @@ instance_type = var.instance_type
     tags = {
         Name = var.instance_name
         ExtraTag = local.extra_tag
-
     }
 ```
 - Define the remaining resources
@@ -116,3 +115,11 @@ instance_type = var.instance_type
         value = aws_instance.terra-inst1.public_ip
     }
 ```
+- run the `terraform init` for initialization
+- terraform will prompt you to enter the db password when you run `terraform plan` or `terraform apply`
+![prompt to enter password](../images/enter-db-pass.png)
+- visit the aws console to view the resources that have been created
+![deployed instance](../images/deployed.png)
+- click *load balance* and copy the *DNS* of the load balancer while R53 is provisioned.
+- run the `terraform destroy` command to delete all the resource.
+
